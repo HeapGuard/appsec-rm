@@ -8,6 +8,6 @@ export function Chrome({ page, onPage, children, compact }: { page: PageId; onPa
   return <div className={compact ? 'app compact' : 'app'}>
     <header className="topbar"><button className="wordmark" onClick={() => goTo('dashboard')} aria-label="Открыть пульт"><span>КОНТУР</span><small>// ПУТЬ APPSEC</small></button><button className="nav-toggle" aria-expanded={menuOpen} aria-controls="main-navigation" onClick={() => setMenuOpen(value => !value)}><span aria-hidden="true">☰</span> МЕНЮ</button><div className="top-meta"><span>ДОПУСК: СТУДЕНТ</span><span className="status-dot" /> СТАТУС: АКТИВЕН</div></header>
     <nav id="main-navigation" className={menuOpen ? 'nav open' : 'nav'} aria-label="Основная навигация">{items.map(([id, label, num]) => <button key={id} className={page === id ? 'active' : ''} onClick={() => goTo(id)}><small>{num}</small>{label}</button>)}</nav>
-    <main>{children}</main><footer><span>УЗЕЛ 04 // ЛОКАЛЬНЫЕ ДАННЫЕ</span><span>РЕД. 2026</span></footer>
+    <main>{children}</main><footer><span><b>КОНТУР // ЛОКАЛЬНЫЙ РЕЖИМ</b><small>Твои записи сохраняются только в этом браузере.</small></span><span><b>РЕЗЕРВНАЯ КОПИЯ</b><small>Экспортируй данные в разделе «Данные».</small></span></footer>
   </div>;
 }
