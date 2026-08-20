@@ -1,5 +1,5 @@
 export type KnowledgeStatus = 0 | 1 | 2 | 3;
-export type PageId = 'dashboard' | 'roadmap' | 'today' | 'resources' | 'activity' | 'reviews' | 'report' | 'data';
+export type PageId = 'dashboard' | 'roadmap' | 'today' | 'pomodoro' | 'resources' | 'activity' | 'reviews' | 'report' | 'data';
 export type Area = 'SYSTEM' | 'WEB' | 'WEB SECURITY' | 'CODE' | 'SECURE CODING' | 'APPSEC' | 'DEVSECOPS' | 'ARCHITECTURE';
 export type ResourceType = 'Основной материал' | 'Практика' | 'Справочник' | 'Дополнительно';
 
