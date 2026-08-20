@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react';
-import type { UserState } from '../types';
+import type { StoredUserState, UserState } from '../types';
 import { isState } from '../utils/storage';
 import { fullDate } from '../utils/date';
 
-export function DataPage({ state, onExport, onImport, onReset, onSettings }: { state: UserState; onExport: () => void; onImport: (value: UserState) => void; onReset: () => void; onSettings: (patch: Partial<UserState['settings']>) => void }) {
+export function DataPage({ state, onExport, onImport, onReset, onSettings }: { state: UserState; onExport: () => void; onImport: (value: StoredUserState) => void; onReset: () => void; onSettings: (patch: Partial<UserState['settings']>) => void }) {
   const input = useRef<HTMLInputElement>(null); const [message, setMessage] = useState('');
   const exportData = () => { const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = `kontur-appsec-backup-${new Date().toISOString().slice(0, 10)}.json`; link.click(); URL.revokeObjectURL(url); onExport(); setMessage('Резервная копия скачана.'); };
   const importData = async (file?: File) => { if (!file) return; try { const parsed: unknown = JSON.parse(await file.text()); if (!isState(parsed)) throw new Error(); onImport(parsed); setMessage('Данные импортированы и проверены.'); } catch { setMessage('Не удалось импортировать файл: ожидается корректная резервная копия КОНТУР v1.'); } if (input.current) input.current.value = ''; };

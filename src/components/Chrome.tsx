@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { PageId } from '../types';
 
-const items: Array<[PageId, string, string]> = [['dashboard', 'Пульт', '01'], ['roadmap', 'Маршрут', '02'], ['today', 'Сегодня', '03'], ['pomodoro', 'Таймер', '04'], ['resources', 'Материалы', '05'], ['activity', 'Активность', '06'], ['reviews', 'Повторение', '07'], ['report', 'Отчёт', '08'], ['data', 'Данные', '09']];
+const items: Array<[PageId, string, string]> = [['dashboard', 'Пульт', '01'], ['roadmap', 'Маршрут', '02'], ['today', 'Сегодня', '03'], ['pomodoro', 'Таймер', '04'], ['practice', 'Практика', '05'], ['resources', 'Материалы', '06'], ['activity', 'Активность', '07'], ['reviews', 'Повторение', '08'], ['report', 'Отчёт', '09'], ['data', 'Данные', '10']];
 export function Chrome({ page, onPage, children, compact }: { page: PageId; onPage: (page: PageId) => void; children: React.ReactNode; compact: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const goTo = (target: PageId) => { onPage(target); setMenuOpen(false); };

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { DailyLog, TopicProgress, UserState } from '../types';
+import type { DailyLog, PracticeCase, StoredUserState, TopicProgress, UserState } from '../types';
 import { addDays, dateKey } from '../utils/date';
-import { initialState, loadState, saveState } from '../utils/storage';
+import { initialState, loadState, normalizeState, saveState } from '../utils/storage';
 
 const reviewIntervals = [1, 3, 7, 14, 30, 60];
 export function useAppState() {
@@ -18,6 +18,8 @@ export function useAppState() {
     }),
     saveLog: (log: DailyLog) => setState(s => ({ ...s, dailyLogs: [...s.dailyLogs.filter(item => item.date !== log.date), log] })),
     removeLog: (id: string) => setState(s => ({ ...s, dailyLogs: s.dailyLogs.filter(log => log.id !== id) })),
+    savePracticeCase: (item: PracticeCase) => setState(s => ({ ...s, practiceCases: [...s.practiceCases.filter(existing => existing.id !== item.id), item] })),
+    removePracticeCase: (id: string) => setState(s => ({ ...s, practiceCases: s.practiceCases.filter(item => item.id !== id), dailyLogs: s.dailyLogs.map(log => log.practiceCaseId === id ? { ...log, practiceCaseId: undefined } : log) })),
     answerReview: (topicId: string, result: 'again' | 'hard' | 'good' | 'easy', answers: Record<string, string>) => setState(s => {
       const old = s.reviews[topicId]; if (!old) return s;
       const change = result === 'again' ? -1 : result === 'hard' ? 0 : result === 'good' ? 1 : 2;
@@ -28,7 +30,7 @@ export function useAppState() {
     setCheckpoint: (id: string, value: 0 | 1 | 2) => setState(s => ({ ...s, checkpoints: { ...s.checkpoints, [id]: value } })),
     setSettings: (patch: Partial<UserState['settings']>) => setState(s => ({ ...s, settings: { ...s.settings, ...patch } })),
     markExported: () => setState(s => ({ ...s, backup: { lastExportAt: new Date().toISOString() } })),
-    importState: (next: UserState) => setState(next), reset: () => setState(initialState())
+    importState: (next: StoredUserState) => setState(normalizeState(next)), reset: () => setState(initialState())
   }), []);
   return { state, ...api };
 }
