@@ -63,6 +63,44 @@ const seeds: Array<[string, string, Area, TopicSeed[]]> = [
     ['capstone', 'Полный AppSec assessment', 'Architecture, DFD, threat model, requirements, manual testing, code review, SAST/SCA, SBOM, CI/CD, Docker и report.', 'Итоговый цикл DESIGN → CODE → TEST → FIX → AUTOMATE.']]]
 ];
 
+const subtopicPlans: Record<string, Array<[string, string]>> = {
+  http: [['request-line', 'Строка запроса и HTTP methods'], ['headers', 'Headers: Host, Content-Type, Authorization'], ['cookies', 'Cookies, атрибуты Secure и HttpOnly'], ['responses', 'Status codes, redirects и caching']],
+  'web-browser': [['dom', 'DOM и обработка пользовательского ввода'], ['storage', 'localStorage, sessionStorage и cookies'], ['fetch', 'fetch/XHR и жизненный цикл запроса'], ['forms', 'HTML forms и serialisation данных']],
+  'sop-cors': [['origin', 'Origin и границы Same-Origin Policy'], ['preflight', 'Preflight request и Access-Control headers'], ['credentials', 'CORS с credentials и риски wildcard']],
+  backend: [['authn-authz', 'Authentication vs authorization'], ['sessions', 'Session, bearer token и JWT'], ['api-flow', 'Путь запроса: proxy → backend → database']],
+  sqli: [['sqli-detection', 'Признаки SQLi в параметрах и ошибках'], ['sqli-impact', 'Impact: чтение, изменение и обход доступа'], ['sqli-fix', 'Prepared statements и parameterized queries'], ['sqli-code-review', 'SQL sinks в исходном коде']],
+  'command-injection': [['command-sinks', 'Опасные вызовы shell и process execution'], ['argument-injection', 'Argument injection и безопасные API'], ['command-fix', 'Allowlist и отказ от shell-интерполяции']],
+  'path-traversal': [['path-input', 'Нормализация пути и user-controlled filename'], ['path-bypass', 'Кодировки, absolute path и обходы'], ['path-fix', 'Allowlist, canonical path и безопасная выдача файлов']],
+  'file-upload': [['upload-validation', 'Проверка type, size и content'], ['upload-storage', 'Изоляция хранилища и случайные имена'], ['upload-serving', 'Безопасная раздача загруженных файлов']],
+  'auth-vulns': [['password-policy', 'Хранение паролей и password hashing'], ['login-flows', 'Login, reset и account enumeration'], ['session-security', 'Session fixation, expiration и logout']],
+  xss: [['xss-contexts', 'HTML, attribute, JavaScript и URL contexts'], ['xss-sinks', 'innerHTML, DOM sinks и client-side templates'], ['xss-fix', 'Output encoding, sanitization и CSP']],
+  csrf: [['csrf-model', 'Почему cookie-сессия допускает CSRF'], ['csrf-controls', 'CSRF token, SameSite и origin checks'], ['csrf-testing', 'Проверка защищённости state-changing requests']],
+  idor: [['object-authorization', 'Проверка доступа к объекту на сервере'], ['function-authorization', 'Права на действие и привилегии'], ['idor-testing', 'Подмена идентификаторов и negative tests']],
+  'business-logic': [['workflow', 'Инварианты бизнес-процесса'], ['race', 'Повтор операций и конкурирующие запросы'], ['abuse-cases', 'Abuse cases и ограничения продукта']],
+  ssrf: [['ssrf-entry', 'URL input и server-side request sinks'], ['ssrf-targets', 'Internal services, metadata и DNS'], ['ssrf-fix', 'Allowlist, DNS validation и egress controls']],
+  xxe: [['xml-parser', 'Опасные настройки XML parser'], ['entity-impact', 'External entity, file read и SSRF'], ['xxe-fix', 'Отключение DTD и безопасные parser settings']],
+  ssti: [['template-sinks', 'Шаблонные движки и template expressions'], ['ssti-detection', 'Безопасная диагностика в лаборатории'], ['ssti-fix', 'Разделение шаблона и данных']],
+  'jwt-oauth': [['jwt-validation', 'Подпись, algorithm, exp, aud и iss'], ['oauth-flow', 'Authorization Code, redirect URI и PKCE'], ['oauth-scopes', 'Scopes, consent и token storage']],
+  python: [['python-http', 'requests, timeout и обработка HTTP response'], ['python-parsing', 'JSON, regex и безопасный parsing'], ['python-cli', 'CLI arguments, files и logging']],
+  javascript: [['js-dom', 'DOM API и dangerous sinks'], ['js-async', 'Promises, async/await и fetch'], ['js-browser-security', 'postMessage, cookies и storage']],
+  sql: [['sql-queries', 'SELECT, WHERE и JOIN'], ['sql-writes', 'INSERT, UPDATE, DELETE и transactions'], ['sql-parameters', 'Prepared statements на практике']],
+  validation: [['input-validation', 'Allowlist, type, length и canonicalization'], ['output-encoding', 'Кодирование данных по контексту'], ['sanitization', 'Когда sanitization уместна, а когда нет']],
+  'secure-auth': [['passwords', 'Argon2/bcrypt, reset и MFA concepts'], ['authorization-design', 'Server-side authorization checks'], ['session-controls', 'Cookie flags, rotation и timeouts']],
+  'source-sink': [['sources', 'Источники недоверенных данных'], ['data-flow', 'Трассировка data flow между функциями'], ['sinks', 'SQL, shell, filesystem и DOM sinks']],
+  sast: [['sast-triage', 'True positive, false positive и приоритизация'], ['semgrep-rules', 'Структура простого Semgrep rule'], ['codeql-basics', 'Query, database и taint tracking']],
+  sca: [['dependency-inventory', 'Direct и transitive dependencies'], ['vuln-triage', 'CVE, CWE, CVSS и exploitability'], ['remediation', 'Update, patch, compensate и accept risk']],
+  secrets: [['secret-types', 'API keys, tokens, private keys и passwords'], ['git-history', 'Secrets в commit history и rotation'], ['secret-controls', 'Pre-commit checks и CI scanning']],
+  dast: [['proxy-workflow', 'Proxy, scope и manual testing flow'], ['zap-scan', 'Что автоматический DAST находит и не находит'], ['finding-validation', 'Подтверждение находки перед отчётом']],
+  cicd: [['pipeline-security', 'SAST, SCA, secret scan и artifact checks'], ['ci-permissions', 'Права токенов, secrets и runner trust'], ['security-gates', 'Пороговые проверки и работа с исключениями']],
+  docker: [['dockerfile', 'Base image, layers, user и COPY'], ['container-runtime', 'Capabilities, privileged и exposed ports'], ['image-supply-chain', 'Registry, scanning и pinning versions']],
+  'threat-modeling': [['dfd', 'Data Flow Diagram и trust boundaries'], ['stride', 'STRIDE по компонентам и потокам'], ['mitigations', 'Связь угроз, controls и security requirements']],
+  ssdlc: [['requirements', 'Security requirements и abuse cases'], ['design-review', 'Design review и threat modeling'], ['release-controls', 'Security checks до и после deploy']],
+  'api-security': [['api-authz', 'Object-level и function-level authorization'], ['api-input', 'Mass assignment и schema validation'], ['api-resilience', 'Rate limiting, pagination и resource consumption']],
+  'supply-chain': [['package-selection', 'Lock files и доверие к package source'], ['provenance', 'Provenance, signing и artifact integrity'], ['sbom-usage', 'Использование SBOM при инциденте']],
+  capstone: [['architecture-assessment', 'Архитектура, assets и DFD'], ['testing-assessment', 'Manual testing и code review'], ['automation-assessment', 'SAST, SCA, SBOM и pipeline'], ['reporting-assessment', 'Finding, severity, fix и re-test']]
+};
+const defaultSubtopics = (title: string): Array<[string, string]> => [['concept', `Модель и терминология: ${title}`], ['practice', `Практическая работа: ${title}`], ['review', `Самопроверка и безопасный подход: ${title}`]].map(([suffix, description]) => [suffix, description] as [string, string]);
+
 const sharedQuestions: Record<string, string[]> = {
   sqli: ['Почему возникает SQL Injection?', 'Что такое parameterized query?', 'Почему prepared statements надёжнее escaping?', 'Какой impact возможен?'],
   ssrf: ['Что делает SSRF?', 'Почему внутренние адреса особенно чувствительны?', 'Какие защиты работают на уровне приложения и сети?'],
@@ -70,7 +108,7 @@ const sharedQuestions: Record<string, string[]> = {
   'network-services': ['Что делает DNS?', 'Чем A отличается от CNAME?', 'Чем recursive resolver отличается от authoritative DNS?', 'Что происходит после ввода домена в браузер?']
 };
 
-export const topics: RoadmapTopic[] = seeds.flatMap(([stageId, _title, area, rows]) => rows.map(([id, title, description, why]) => ({ id, title, description, why, stageId, area, practice: stageId.startsWith('websec') || stageId === 'advanced' ? ['Пройти релевантную лабораторию в PortSwigger Web Security Academy.', 'Записать наблюдения и безопасный способ исправления.'] : [], questions: sharedQuestions[id] ?? ['Что это?', 'Зачем это AppSec-инженеру?', 'Как проявляется типичная ошибка?', 'Как бы ты объяснил это без технического жаргона?'] })));
+export const topics: RoadmapTopic[] = seeds.flatMap(([stageId, _title, area, rows]) => rows.map(([id, title, description, why]) => ({ id, title, description, why, stageId, area, practice: stageId.startsWith('websec') || stageId === 'advanced' ? ['Пройти релевантную лабораторию в PortSwigger Web Security Academy.', 'Записать наблюдения и безопасный способ исправления.'] : [], questions: sharedQuestions[id] ?? ['Что это?', 'Зачем это AppSec-инженеру?', 'Как проявляется типичная ошибка?', 'Как бы ты объяснил это без технического жаргона?'], subtopics: (subtopicPlans[id] ?? defaultSubtopics(title)).map(([suffix, subtopicDescription]) => ({ id: `${id}--${suffix}`, title: subtopicDescription.split(': ').at(-1) ?? subtopicDescription, description: subtopicDescription })) })));
 
 const stageDescription: Record<string, string> = {
   system: 'Инженерный фундамент: операционная система и сеть.', web: 'Как устроено web-приложение до начала security testing.', websec1: 'Базовые уязвимости и безопасная практика на лабораториях.', websec2: 'Browser security и контроль доступа.', advanced: 'Расширение модели web-атак.', code: 'Код для понимания и безопасной автоматизации.', 'secure-code': 'Переход от finding к понятному fix.', toolchain: 'Инструменты AppSec и их роль в процессе.', devsecops: 'Встраивание проверок в поставку.', architecture: 'Риски на уровне дизайна и жизненного цикла.', 'api-supply': 'Безопасность API и цепочки поставки.', capstone: 'Собери полный инженерный AppSec lifecycle.'
@@ -98,3 +136,4 @@ export const resources: Resource[] = ([
 ] satisfies ResourceSeed[]).map(([id, title, type, language, url, description, relatedTopicIds]) => ({ id, title, type, language, free: true, url, description, relatedTopicIds }));
 
 export const topicById = Object.fromEntries(topics.map(topic => [topic.id, topic]));
+export const subtopicById = Object.fromEntries(topics.flatMap(topic => topic.subtopics.map(subtopic => [subtopic.id, { ...subtopic, topicId: topic.id }])));
